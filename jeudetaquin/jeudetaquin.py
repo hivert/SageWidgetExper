@@ -5,13 +5,12 @@ from sage.all import SageObject
 Tableaux.options.display="array"
 Tableaux.options.convention="French"
 
-class JeuDeTaquin(SageObject):
-    def __init__(self, tab):
+class JeuDeTaquin(SkewTableau):
+    def __init__(self, st):
         r"""
         sage: from sage.combinat.skew_tableau import SkewTableau
-        sage: t = SkewTableau([[None,2,3],[None,4],[5]])
         sage: from jeudetaquin import JeuDeTaquin
-        sage: jdt = JeuDeTaquin(t); jdt
+        sage: jdt = JeuDeTaquin([[None,2,3],[None,4],[5]]) ; jdt
           5
           .  4
           .  2  3
@@ -224,25 +223,24 @@ class JeuDeTaquin(SageObject):
           4  6  9
           2  3  7  8
         """
-        assert isinstance(tab, SkewTableau)
-        self._tab = tab
+        super(JeuDeTaquin, self).__init__(SkewTableaux(), st)
         self._hole = None
         self._new_st = None
 
     def _repr_(self):
         if self._hole is None:
-            lst = self._tab.to_list()
+            lst = self.to_list()
         else:
             lst = self._new_st
         none_str = lambda x: "  ." if x is None else "%3s"%str(x)
-        if self._tab.parent().options('convention') == "French":
+        if self.parent().options('convention') == "French":
             new_rows = ["".join(map(none_str, row)) for row in reversed(lst)]
         else:
             new_rows = ["".join(map(none_str, row)) for row in lst]
         return '\n'.join(new_rows)
 
     def done(self):
-        return self._hole is None and not self._tab.inner_shape()
+        return self._hole is None and not self.inner_shape()
 
     def has_hole(self):
         return self._hole is not None
@@ -250,11 +248,11 @@ class JeuDeTaquin(SageObject):
     def create_hole(self, corner):
         if self._hole is not None:
             raise ValueError, "There is already a hole at %s"%(self._hole,)
-        inner_corners = self._tab.inner_shape().corners()
+        inner_corners = self.inner_shape().corners()
         if tuple(corner) not in inner_corners:
             raise ValueError("corner must be an inner corner")
         self._hole = corner
-        self._new_st = self._tab.to_list()
+        self._new_st = self.to_list()
         spotl, spotc = self._hole
         self._new_st[spotl][spotc] = "*"
 
@@ -291,11 +289,11 @@ class JeuDeTaquin(SageObject):
                 self._new_st[spotl][spotc] = self._new_st[spotl][spotc+1]
                 self._new_st[spotl][spotc+1] = "*"
                 spotc += 1
-        if (spotl, spotc) in self._tab.outer_shape().corners():
+        if (spotl, spotc) in self.outer_shape().corners():
             self._new_st[spotl].pop()
             if not self._new_st[spotl]:
                 self._new_st.pop()
-            self._tab = SkewTableau(self._new_st)
+            self = SkewTableau(self._new_st) # FIXME
             self._hole = None
             self._new_st = None
         else:
