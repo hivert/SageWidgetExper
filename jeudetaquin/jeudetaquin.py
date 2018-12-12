@@ -293,9 +293,7 @@ class JeuDeTaquin(SkewTableau):
             self._new_st[spotl].pop()
             if not self._new_st[spotl]:
                 self._new_st.pop()
-            self = SkewTableau(self._new_st) # FIXME
-            self._hole = None
-            self._new_st = None
+            self.__init__(self._new_st) # Resurrection?
         else:
             self._hole = (spotl, spotc)
 
