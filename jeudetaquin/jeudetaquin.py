@@ -239,6 +239,13 @@ class JeuDeTaquin(SkewTableau):
             new_rows = ["".join(map(none_str, row)) for row in lst]
         return '\n'.join(new_rows)
 
+    def __eq__(self, obj):
+        if obj._hole != self._hole:
+            return False
+        if obj._new_st != self._new_st:
+            return False
+        return super(JeuDeTaquin, self) == super(JeuDeTaquin, obj)
+
     def done(self):
         return self._hole is None and not self.inner_shape()
 
