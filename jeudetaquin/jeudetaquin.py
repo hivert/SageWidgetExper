@@ -261,7 +261,7 @@ class JeuDeTaquin(SkewTableau):
         self._hole = corner
         self._new_st = self.to_list()
         spotl, spotc = self._hole
-        self._new_st[spotl][spotc] = "*"
+        self._new_st[spotl][spotc] = True
 
     def slide(self):
         if self._hole is None:
@@ -271,7 +271,7 @@ class JeuDeTaquin(SkewTableau):
         if spotc == len(self._new_st[spotl]) - 1:
             #Swap the hole with the cell below
             self._new_st[spotl][spotc] = self._new_st[spotl+1][spotc]
-            self._new_st[spotl+1][spotc] = "*"
+            self._new_st[spotl+1][spotc] = -1
             spotl += 1
 
         #Check to see if there is nothing below
@@ -279,7 +279,7 @@ class JeuDeTaquin(SkewTableau):
               len(self._new_st[spotl+1]) <= spotc):
             #Swap the hole with the cell to the right
             self._new_st[spotl][spotc] = self._new_st[spotl][spotc+1]
-            self._new_st[spotl][spotc+1] = "*"
+            self._new_st[spotl][spotc+1] = -1
             spotc += 1
 
         else:
@@ -289,12 +289,12 @@ class JeuDeTaquin(SkewTableau):
             if below <= right:
                 #Swap with the cell below
                 self._new_st[spotl][spotc] = self._new_st[spotl+1][spotc]
-                self._new_st[spotl+1][spotc] = "*"
+                self._new_st[spotl+1][spotc] = -1
                 spotl += 1
             else:
                 #Otherwise swap with the cell to the right
                 self._new_st[spotl][spotc] = self._new_st[spotl][spotc+1]
-                self._new_st[spotl][spotc+1] = "*"
+                self._new_st[spotl][spotc+1] = -1
                 spotc += 1
         if (spotl, spotc) in self.outer_shape().corners():
             self._new_st[spotl].pop()
@@ -303,5 +303,3 @@ class JeuDeTaquin(SkewTableau):
             self.__init__(self._new_st) # Resurrection?
         else:
             self._hole = (spotl, spotc)
-
-
